@@ -18,7 +18,8 @@ html, body {
 }
 
 body {
-    background: #74777a;
+    --bg: #74777a;
+    background: var(--bg);
     color: #fff;
     font-family:
         -apple-system,
@@ -28,6 +29,18 @@ body {
         "Yu Gothic",
         sans-serif;
 }
+
+/* =========================
+   天気ごとの背景色
+========================= */
+
+body[data-theme="sun"]     { --bg: #3f8fd6; }  /* 晴れ・快晴 */
+body[data-theme="partly"]  { --bg: #5f9bc4; }  /* 晴れ時々くもり など */
+body[data-theme="cloud"]   { --bg: #74777a; }  /* 曇 */
+body[data-theme="fog"]     { --bg: #8a9196; }  /* 霧 */
+body[data-theme="rain"]    { --bg: #46586b; }  /* 雨 */
+body[data-theme="snow"]    { --bg: #7f9bb5; }  /* 雪 */
+body[data-theme="thunder"] { --bg: #4b4663; }  /* 雷雨 */
 
 .weather-card {
     width: 100%;
@@ -42,7 +55,7 @@ body {
             rgba(255,255,255,.02) 45%,
             rgba(0,0,0,.12)
         ),
-        #74777a;
+        var(--bg);
 }
 
 
@@ -343,85 +356,23 @@ const icons = {
 
     sun: `
         <svg viewBox="0 0 100 100">
-
-            <circle
-                cx="50"
-                cy="50"
-                r="22"
-                class="sun"
-            />
-
-            <g
-                stroke="#f5d36a"
-                stroke-width="6"
-                stroke-linecap="round"
-            >
-
-                <line
-                    x1="50"
-                    y1="7"
-                    x2="50"
-                    y2="20"
-                />
-
-                <line
-                    x1="50"
-                    y1="80"
-                    x2="50"
-                    y2="93"
-                />
-
-                <line
-                    x1="7"
-                    y1="50"
-                    x2="20"
-                    y2="50"
-                />
-
-                <line
-                    x1="80"
-                    y1="50"
-                    x2="93"
-                    y2="50"
-                />
-
-                <line
-                    x1="19"
-                    y1="19"
-                    x2="28"
-                    y2="28"
-                />
-
-                <line
-                    x1="72"
-                    y1="72"
-                    x2="81"
-                    y2="81"
-                />
-
-                <line
-                    x1="81"
-                    y1="19"
-                    x2="72"
-                    y2="28"
-                />
-
-                <line
-                    x1="28"
-                    y1="72"
-                    x2="19"
-                    y2="81"
-                />
-
+            <circle cx="50" cy="50" r="22" class="sun" />
+            <g stroke="#f5d36a" stroke-width="6" stroke-linecap="round">
+                <line x1="50" y1="7" x2="50" y2="20" />
+                <line x1="50" y1="80" x2="50" y2="93" />
+                <line x1="7" y1="50" x2="20" y2="50" />
+                <line x1="80" y1="50" x2="93" y2="50" />
+                <line x1="19" y1="19" x2="28" y2="28" />
+                <line x1="72" y1="72" x2="81" y2="81" />
+                <line x1="81" y1="19" x2="72" y2="28" />
+                <line x1="28" y1="72" x2="19" y2="81" />
             </g>
-
         </svg>
     `,
 
 
     cloud: `
         <svg viewBox="0 0 100 100">
-
             <path
                 class="cloud"
                 d="
@@ -432,21 +383,13 @@ const icons = {
                     H25z
                 "
             />
-
         </svg>
     `,
 
 
     cloudSun: `
         <svg viewBox="0 0 100 100">
-
-            <circle
-                cx="68"
-                cy="29"
-                r="17"
-                class="sun"
-            />
-
+            <circle cx="68" cy="29" r="17" class="sun" />
             <path
                 class="cloud"
                 d="
@@ -457,14 +400,12 @@ const icons = {
                     H23z
                 "
             />
-
         </svg>
     `,
 
 
     rain: `
         <svg viewBox="0 0 100 100">
-
             <path
                 class="cloud"
                 d="
@@ -475,39 +416,17 @@ const icons = {
                     H25z
                 "
             />
-
             <g class="rain-line">
-
-                <line
-                    x1="34"
-                    y1="70"
-                    x2="30"
-                    y2="88"
-                />
-
-                <line
-                    x1="52"
-                    y1="70"
-                    x2="48"
-                    y2="88"
-                />
-
-                <line
-                    x1="70"
-                    y1="70"
-                    x2="66"
-                    y2="88"
-                />
-
+                <line x1="34" y1="70" x2="30" y2="88" />
+                <line x1="52" y1="70" x2="48" y2="88" />
+                <line x1="70" y1="70" x2="66" y2="88" />
             </g>
-
         </svg>
     `,
 
 
     snow: `
         <svg viewBox="0 0 100 100">
-
             <path
                 class="cloud"
                 d="
@@ -518,36 +437,17 @@ const icons = {
                     H25z
                 "
             />
-
             <g fill="#eef5fb">
-
-                <circle
-                    cx="34"
-                    cy="77"
-                    r="4"
-                />
-
-                <circle
-                    cx="52"
-                    cy="85"
-                    r="4"
-                />
-
-                <circle
-                    cx="70"
-                    cy="77"
-                    r="4"
-                />
-
+                <circle cx="34" cy="77" r="4" />
+                <circle cx="52" cy="85" r="4" />
+                <circle cx="70" cy="77" r="4" />
             </g>
-
         </svg>
     `,
 
 
     thunder: `
         <svg viewBox="0 0 100 100">
-
             <path
                 class="cloud"
                 d="
@@ -558,55 +458,40 @@ const icons = {
                     H25z
                 "
             />
-
             <polygon
                 points="58,59 43,81 52,81 42,96 68,70 58,70"
                 fill="#f5d36a"
             />
-
         </svg>
     `,
 
 
     fog: `
         <svg viewBox="0 0 100 100">
-
-            <g
-                stroke="#e3e7eb"
-                stroke-width="7"
-                stroke-linecap="round"
-            >
-
-                <line
-                    x1="15"
-                    y1="38"
-                    x2="85"
-                    y2="38"
-                />
-
-                <line
-                    x1="10"
-                    y1="54"
-                    x2="90"
-                    y2="54"
-                />
-
-                <line
-                    x1="15"
-                    y1="70"
-                    x2="85"
-                    y2="70"
-                />
-
+            <g stroke="#e3e7eb" stroke-width="7" stroke-linecap="round">
+                <line x1="15" y1="38" x2="85" y2="38" />
+                <line x1="10" y1="54" x2="90" y2="54" />
+                <line x1="15" y1="70" x2="85" y2="70" />
             </g>
-
         </svg>
     `
 };
 
 
 /* =========================
-   天気コード
+   天気コード(WMO)の変換
+
+   ・hourly.weather_code
+       その時刻ちょうどの天気(瞬間値)。
+       時間別予報では、これをそのまま変換して使う。
+
+   ・daily.weather_code
+       その日の「最も悪い(重い)天気」のコード。
+       平均や代表ではないので、時間別予報と
+       食い違って見えることがある。
+       → 画面上部の表示には使わず、
+         時間別データから代表天気を計算する。
+         (時間別データが取れないときだけ予備で使う)
 ========================= */
 
 function weatherInfo(code) {
@@ -637,10 +522,192 @@ function weatherInfo(code) {
     if (code >= 80 && code <= 82)
         return ["にわか雨", "rain"];
 
+    if (code === 85 || code === 86)
+        return ["にわか雪", "snow"];
+
     if (code >= 95)
         return ["雷雨", "thunder"];
 
     return ["曇", "cloud"];
+}
+
+
+/* =========================
+   コードをグループに分類
+   (代表天気の計算用)
+========================= */
+
+function weatherGroup(code) {
+
+    code = Number(code);
+
+    if (code === 0 || code === 1)
+        return "sun";
+
+    if (code === 2)
+        return "partly";
+
+    if (code === 3)
+        return "cloud";
+
+    if (code === 45 || code === 48)
+        return "fog";
+
+    if (
+        (code >= 51 && code <= 67) ||
+        (code >= 80 && code <= 82)
+    )
+        return "rain";
+
+    if (
+        (code >= 71 && code <= 77) ||
+        code === 85 ||
+        code === 86
+    )
+        return "snow";
+
+    if (code >= 95)
+        return "thunder";
+
+    return "cloud";
+}
+
+
+/* =========================
+   時刻文字列の分解
+   "2026-10-29T06:00" → 日付と時
+   (タイムゾーン変換の影響を受けないよう
+    文字列のまま扱う)
+========================= */
+
+function splitTime(str) {
+
+    const parts = String(str).split("T");
+
+    return {
+        date: parts[0],
+        hour: Number(parts[1].slice(0, 2))
+    };
+}
+
+
+/* =========================
+   明日の代表天気を時間別から決める
+   (6:00〜21:00 の毎時データを使用)
+========================= */
+
+function summarizeDay(data, targetDate) {
+
+    const codes = [];
+
+    for (let i = 0; i < data.hourly.time.length; i++) {
+
+        const t = splitTime(data.hourly.time[i]);
+
+        if (
+            t.date === targetDate &&
+            t.hour >= 6 &&
+            t.hour <= 21 &&
+            data.hourly.weather_code[i] != null
+        ) {
+
+            codes.push(
+                Number(data.hourly.weather_code[i])
+            );
+
+        }
+
+    }
+
+
+    /* 時間別が取れないときだけ日別コードで代替 */
+
+    if (codes.length === 0) {
+
+        const dc = data.daily.weather_code[1];
+
+        return [
+            weatherInfo(dc)[0],
+            weatherGroup(dc)
+        ];
+
+    }
+
+
+    const n = codes.length;
+
+    const count = {
+        sun: 0,
+        partly: 0,
+        cloud: 0,
+        fog: 0,
+        rain: 0,
+        snow: 0,
+        thunder: 0
+    };
+
+    codes.forEach(c => {
+        count[weatherGroup(c)]++;
+    });
+
+
+    /* 長く続く雨・雪・雷はそのまま代表にする */
+
+    if (count.thunder >= 2)
+        return ["雷雨", "thunder"];
+
+    if (count.snow >= 4)
+        return ["雪", "snow"];
+
+    if (count.rain >= 4)
+        return ["雨", "rain"];
+
+    if (count.fog >= n / 2)
+        return ["霧", "fog"];
+
+
+    /* 晴れ具合から基本の天気を決める */
+
+    const allClear =
+        codes.every(c => c === 0);
+
+    const sunRatio =
+        (count.sun + count.partly * 0.5) / n;
+
+    let base;
+    let theme;
+
+    if (allClear) {
+        base = "快晴";
+        theme = "sun";
+    } else if (sunRatio >= 0.8) {
+        base = "晴れ";
+        theme = "sun";
+    } else if (sunRatio >= 0.5) {
+        base = "晴れ時々くもり";
+        theme = "partly";
+    } else if (sunRatio >= 0.25) {
+        base = "くもり時々晴れ";
+        theme = "partly";
+    } else {
+        base = "曇";
+        theme = "cloud";
+    }
+
+
+    /* 短い時間だけの雨・雪・雷は「一時」を付ける */
+
+    if (count.thunder >= 1)
+        return [base + "一時雷雨", theme];
+
+    if (count.snow >= 1)
+        return [base + "一時雪", theme];
+
+    if (count.rain >= 1)
+        return [base + "一時雨", theme];
+
+
+    return [base, theme];
 }
 
 
@@ -704,6 +771,9 @@ async function loadWeather() {
 
         const tomorrow = 1;
 
+        const targetDate =
+            data.daily.time[tomorrow];
+
 
         /* 最高気温 */
 
@@ -725,17 +795,30 @@ async function loadWeather() {
             );
 
 
-        /* 天気 */
+        /* 明日の代表天気(時間別データから算出) */
 
-        const code =
-            data.daily.weather_code[
-                tomorrow
-            ];
+        const [condition, theme] =
+            summarizeDay(data, targetDate);
 
 
-        const [
-            condition
-        ] = weatherInfo(code);
+        /* 確認用ログ(開発者ツールのコンソールで見られる) */
+
+        console.log(
+            "daily.weather_code(最も悪い天気):",
+            data.daily.weather_code[tomorrow]
+        );
+
+        console.log(
+            "hourly.weather_code(明日・毎時):",
+            data.hourly.time
+                .map((t, i) => ({
+                    time: t,
+                    code: data.hourly.weather_code[i]
+                }))
+                .filter(
+                    x => x.time.startsWith(targetDate)
+                )
+        );
 
 
         /* 表示 */
@@ -743,6 +826,11 @@ async function loadWeather() {
         document.getElementById(
             "condition"
         ).textContent = condition;
+
+
+        /* 天気に合わせて背景色を変える */
+
+        document.body.dataset.theme = theme;
 
 
         document.getElementById(
@@ -759,7 +847,7 @@ async function loadWeather() {
 
         const tomorrowDate =
             new Date(
-                data.daily.time[tomorrow]
+                targetDate
                 + "T12:00:00"
             );
 
@@ -809,6 +897,7 @@ async function loadWeather() {
 
 /* =========================
    3時間ごとの予報
+   (各時刻の hourly.weather_code をそのまま変換)
 ========================= */
 
 function renderHourly(data) {
@@ -835,22 +924,8 @@ function renderHourly(data) {
         i++
     ) {
 
-        const time =
-            new Date(
-                data.hourly.time[i]
-            );
-
-
-        const date =
-            time.getFullYear()
-            + "-"
-            + String(
-                time.getMonth() + 1
-            ).padStart(2, "0")
-            + "-"
-            + String(
-                time.getDate()
-            ).padStart(2, "0");
+        const t =
+            splitTime(data.hourly.time[i]);
 
 
         /*
@@ -863,10 +938,10 @@ function renderHourly(data) {
          */
 
         if (
-            date === targetDate &&
-            time.getHours() >= 6 &&
-            time.getHours() <= 21 &&
-            time.getHours() % 3 === 0
+            t.date === targetDate &&
+            t.hour >= 6 &&
+            t.hour <= 21 &&
+            t.hour % 3 === 0
         ) {
 
             slots.push(i);
@@ -880,10 +955,8 @@ function renderHourly(data) {
 
     slots.slice(0, 6).forEach(i => {
 
-        const time =
-            new Date(
-                data.hourly.time[i]
-            );
+        const t =
+            splitTime(data.hourly.time[i]);
 
 
         const code =
@@ -923,7 +996,7 @@ function renderHourly(data) {
         el.innerHTML = `
 
             <div class="hour-time">
-                ${time.getHours()}:00
+                ${t.hour}:00
             </div>
 
             <div
