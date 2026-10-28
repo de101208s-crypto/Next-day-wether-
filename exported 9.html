@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>交野市｜明日の天気</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    background: #74777a;
+    color: #fff;
+    font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Noto Sans JP",
+        "Hiragino Sans",
+        "Yu Gothic",
+        sans-serif;
+}
+
+.weather-card {
+    width: 100%;
+    height: 100%;
+    padding: 28px 34px 24px;
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.12),
+            rgba(255,255,255,.02) 45%,
+            rgba(0,0,0,.12)
+        ),
+        #74777a;
+}
+
+
+/* =========================
+   上部
+========================= */
+
+.top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.title-area {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.condition {
+    font-size: clamp(25px, 4vw, 44px);
+    font-weight: 500;
+    letter-spacing: .04em;
+}
+
+.location {
+    font-size: clamp(15px, 2vw, 22px);
+    opacity: .82;
+}
+
+.tomorrow {
+    font-size: clamp(13px, 1.6vw, 18px);
+    opacity: .68;
+}
+
+
+/* =========================
+   最高気温
+========================= */
+
+.big-temp {
+    font-size: clamp(55px, 8vw, 100px);
+    line-height: .9;
+    font-weight: 300;
+    letter-spacing: -.04em;
+}
+
+.temp-unit {
+    font-size: .38em;
+    margin-left: 2px;
+}
+
+.high-low {
+    margin-top: 8px;
+    font-size: clamp(14px, 1.8vw, 22px);
+    opacity: .86;
+    text-align: right;
+}
+
+
+/* =========================
+   3時間ごとの予報
+========================= */
+
+.hourly {
+    margin-top: 80px;
+
+    height: 48%;
+    min-height: 130px;
+
+    display: flex;
+    align-items: stretch;
+    justify-content: space-around;
+
+    gap: 5px;
+
+    padding: 18px 5px;
+
+    border-top: 1px solid rgba(255,255,255,.22);
+}
+
+.hour {
+    flex: 1;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    min-width: 0;
+}
+
+.hour-time {
+    font-size: clamp(13px, 1.7vw, 19px);
+    opacity: .82;
+}
+
+.hour-icon {
+    width: clamp(38px, 5vw, 58px);
+    height: clamp(38px, 5vw, 58px);
+}
+
+.hour-icon svg {
+    width: 100%;
+    height: 100%;
+}
+
+.hour-temp {
+    font-size: clamp(17px, 2.4vw, 29px);
+}
+
+.hour-rain {
+    font-size: clamp(11px, 1.4vw, 16px);
+    opacity: .72;
+}
+
+
+/* =========================
+   情報
+========================= */
+
+.source {
+    position: absolute;
+    right: 34px;
+    bottom: 8px;
+
+    font-size: 10px;
+    opacity: .42;
+}
+
+.error {
+    position: absolute;
+    left: 34px;
+    bottom: 12px;
+
+    font-size: 12px;
+    color: #ffe2e2;
+
+    display: none;
+}
+
+.loading {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: rgba(50,50,50,.18);
+
+    font-size: 20px;
+}
+
+
+/* =========================
+   天気アイコン
+========================= */
+
+.cloud {
+    fill: rgba(245,247,250,.95);
+}
+
+.sun {
+    fill: #f5d36a;
+}
+
+.rain-line {
+    stroke: #b9d9ef;
+    stroke-width: 6;
+    stroke-linecap: round;
+}
+
+.moon {
+    fill: #e7eaf0;
+}
+
+</style>
+</head>
+
+
+<body>
+
+<div class="weather-card">
+
+    <!-- 上部 -->
+
+    <div class="top">
+
+        <div class="title-area">
+
+            <div
+                class="condition"
+                id="condition"
+            >
+                読み込み中…
+            </div>
+
+            <div class="location">
+                交野市
+            </div>
+
+            <div
+                class="tomorrow"
+                id="date"
+            >
+                明日の天気
+            </div>
+
+        </div>
+
+
+        <!-- 最高・最低気温 -->
+
+        <div>
+
+            <div class="big-temp">
+
+                <span id="maxTemp">
+                    --
+                </span>
+
+                <span class="temp-unit">
+                    °
+                </span>
+
+            </div>
+
+
+            <div class="high-low">
+
+                最低
+                <span id="minTemp">
+                    --
+                </span>
+                °
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================
+         3時間ごとの予報
+    ========================== -->
+
+    <div
+        class="hourly"
+        id="hourly"
+    ></div>
+
+
+    <!-- 情報元 -->
+
+    <div class="source">
+        Open-Meteo / 交野市
+    </div>
+
+
+    <!-- エラー -->
+
+    <div
+        class="error"
+        id="error"
+    ></div>
+
+
+    <!-- 読み込み中 -->
+
+    <div
+        class="loading"
+        id="loading"
+    >
+        明日の天気を取得中…
+    </div>
+
+</div>
+
+
+
+<script>
+
+/* =========================
+   交野市
+========================= */
+
+const LAT = 34.78;
+const LON = 135.68;
+
+
+/* =========================
+   天気アイコン
+========================= */
+
+const icons = {
+
+    sun: `
+        <svg viewBox="0 0 100 100">
+
+            <circle
+                cx="50"
+                cy="50"
+                r="22"
+                class="sun"
+            />
+
+            <g
+                stroke="#f5d36a"
+                stroke-width="6"
+                stroke-linecap="round"
+            >
+
+                <line
+                    x1="50"
+                    y1="7"
+                    x2="50"
+                    y2="20"
+                />
+
+                <line
+                    x1="50"
+                    y1="80"
+                    x2="50"
+                    y2="93"
+                />
+
+                <line
+                    x1="7"
+                    y1="50"
+                    x2="20"
+                    y2="50"
+                />
+
+                <line
+                    x1="80"
+                    y1="50"
+                    x2="93"
+                    y2="50"
+                />
+
+                <line
+                    x1="19"
+                    y1="19"
+                    x2="28"
+                    y2="28"
+                />
+
+                <line
+                    x1="72"
+                    y1="72"
+                    x2="81"
+                    y2="81"
+                />
+
+                <line
+                    x1="81"
+                    y1="19"
+                    x2="72"
+                    y2="28"
+                />
+
+                <line
+                    x1="28"
+                    y1="72"
+                    x2="19"
+                    y2="81"
+                />
+
+            </g>
+
+        </svg>
+    `,
+
+
+    cloud: `
+        <svg viewBox="0 0 100 100">
+
+            <path
+                class="cloud"
+                d="
+                    M25 72
+                    a20 20 0 0 1 0-40
+                    27 27 0 0 1 51 8
+                    20 20 0 0 1-4 32
+                    H25z
+                "
+            />
+
+        </svg>
+    `,
+
+
+    cloudSun: `
+        <svg viewBox="0 0 100 100">
+
+            <circle
+                cx="68"
+                cy="29"
+                r="17"
+                class="sun"
+            />
+
+            <path
+                class="cloud"
+                d="
+                    M23 73
+                    a19 19 0 0 1 0-38
+                    25 25 0 0 1 47 9
+                    19 19 0 0 1-4 29
+                    H23z
+                "
+            />
+
+        </svg>
+    `,
+
+
+    rain: `
+        <svg viewBox="0 0 100 100">
+
+            <path
+                class="cloud"
+                d="
+                    M25 58
+                    a18 18 0 0 1 0-36
+                    24 24 0 0 1 46 8
+                    19 19 0 0 1-4 28
+                    H25z
+                "
+            />
+
+            <g class="rain-line">
+
+                <line
+                    x1="34"
+                    y1="70"
+                    x2="30"
+                    y2="88"
+                />
+
+                <line
+                    x1="52"
+                    y1="70"
+                    x2="48"
+                    y2="88"
+                />
+
+                <line
+                    x1="70"
+                    y1="70"
+                    x2="66"
+                    y2="88"
+                />
+
+            </g>
+
+        </svg>
+    `,
+
+
+    snow: `
+        <svg viewBox="0 0 100 100">
+
+            <path
+                class="cloud"
+                d="
+                    M25 58
+                    a18 18 0 0 1 0-36
+                    24 24 0 0 1 46 8
+                    19 19 0 0 1-4 28
+                    H25z
+                "
+            />
+
+            <g fill="#eef5fb">
+
+                <circle
+                    cx="34"
+                    cy="77"
+                    r="4"
+                />
+
+                <circle
+                    cx="52"
+                    cy="85"
+                    r="4"
+                />
+
+                <circle
+                    cx="70"
+                    cy="77"
+                    r="4"
+                />
+
+            </g>
+
+        </svg>
+    `,
+
+
+    thunder: `
+        <svg viewBox="0 0 100 100">
+
+            <path
+                class="cloud"
+                d="
+                    M25 58
+                    a18 18 0 0 1 0-36
+                    24 24 0 0 1 46 8
+                    19 19 0 0 1-4 28
+                    H25z
+                "
+            />
+
+            <polygon
+                points="58,59 43,81 52,81 42,96 68,70 58,70"
+                fill="#f5d36a"
+            />
+
+        </svg>
+    `,
+
+
+    fog: `
+        <svg viewBox="0 0 100 100">
+
+            <g
+                stroke="#e3e7eb"
+                stroke-width="7"
+                stroke-linecap="round"
+            >
+
+                <line
+                    x1="15"
+                    y1="38"
+                    x2="85"
+                    y2="38"
+                />
+
+                <line
+                    x1="10"
+                    y1="54"
+                    x2="90"
+                    y2="54"
+                />
+
+                <line
+                    x1="15"
+                    y1="70"
+                    x2="85"
+                    y2="70"
+                />
+
+            </g>
+
+        </svg>
+    `
+};
+
+
+/* =========================
+   天気コード
+========================= */
+
+function weatherInfo(code) {
+
+    code = Number(code);
+
+    if (code === 0)
+        return ["快晴", "sun"];
+
+    if (code === 1)
+        return ["晴れ", "sun"];
+
+    if (code === 2)
+        return ["晴れ時々くもり", "cloudSun"];
+
+    if (code === 3)
+        return ["曇", "cloud"];
+
+    if (code === 45 || code === 48)
+        return ["霧", "fog"];
+
+    if (code >= 51 && code <= 67)
+        return ["雨", "rain"];
+
+    if (code >= 71 && code <= 77)
+        return ["雪", "snow"];
+
+    if (code >= 80 && code <= 82)
+        return ["にわか雨", "rain"];
+
+    if (code >= 95)
+        return ["雷雨", "thunder"];
+
+    return ["曇", "cloud"];
+}
+
+
+/* =========================
+   日付
+========================= */
+
+function formatDate(date) {
+
+    const days = [
+        "日",
+        "月",
+        "火",
+        "水",
+        "木",
+        "金",
+        "土"
+    ];
+
+    return (
+        `${date.getMonth() + 1}月` +
+        `${date.getDate()}日` +
+        `(${days[date.getDay()]})`
+    );
+}
+
+
+/* =========================
+   天気取得
+========================= */
+
+async function loadWeather() {
+
+    const url =
+        `https://api.open-meteo.com/v1/forecast` +
+        `?latitude=${LAT}` +
+        `&longitude=${LON}` +
+        `&daily=weather_code,temperature_2m_max,temperature_2m_min` +
+        `&hourly=temperature_2m,precipitation_probability,weather_code` +
+        `&timezone=Asia%2FTokyo` +
+        `&forecast_days=3`;
+
+    try {
+
+        const response =
+            await fetch(url);
+
+        if (!response.ok) {
+
+            throw new Error(
+                "天気データを取得できませんでした"
+            );
+
+        }
+
+        const data =
+            await response.json();
+
+
+        /* 明日 */
+
+        const tomorrow = 1;
+
+
+        /* 最高気温 */
+
+        const max =
+            Math.round(
+                data.daily.temperature_2m_max[
+                    tomorrow
+                ]
+            );
+
+
+        /* 最低気温 */
+
+        const min =
+            Math.round(
+                data.daily.temperature_2m_min[
+                    tomorrow
+                ]
+            );
+
+
+        /* 天気 */
+
+        const code =
+            data.daily.weather_code[
+                tomorrow
+            ];
+
+
+        const [
+            condition
+        ] = weatherInfo(code);
+
+
+        /* 表示 */
+
+        document.getElementById(
+            "condition"
+        ).textContent = condition;
+
+
+        document.getElementById(
+            "maxTemp"
+        ).textContent = max;
+
+
+        document.getElementById(
+            "minTemp"
+        ).textContent = min;
+
+
+        /* 日付 */
+
+        const tomorrowDate =
+            new Date(
+                data.daily.time[tomorrow]
+                + "T12:00:00"
+            );
+
+
+        document.getElementById(
+            "date"
+        ).textContent =
+            "明日 " +
+            formatDate(tomorrowDate);
+
+
+        /* 時間ごとの予報 */
+
+        renderHourly(data);
+
+
+        /* 読み込み表示を消す */
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+
+    } catch (error) {
+
+        document.getElementById(
+            "loading"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "error"
+        ).textContent =
+            "天気データを取得できませんでした";
+
+
+        document.getElementById(
+            "error"
+        ).style.display = "block";
+
+
+        console.error(error);
+
+    }
+}
+
+
+/* =========================
+   3時間ごとの予報
+========================= */
+
+function renderHourly(data) {
+
+    const container =
+        document.getElementById("hourly");
+
+
+    container.innerHTML = "";
+
+
+    /* 明日の日付 */
+
+    const targetDate =
+        data.daily.time[1];
+
+
+    const slots = [];
+
+
+    for (
+        let i = 0;
+        i < data.hourly.time.length;
+        i++
+    ) {
+
+        const time =
+            new Date(
+                data.hourly.time[i]
+            );
+
+
+        const date =
+            time.getFullYear()
+            + "-"
+            + String(
+                time.getMonth() + 1
+            ).padStart(2, "0")
+            + "-"
+            + String(
+                time.getDate()
+            ).padStart(2, "0");
+
+
+        /*
+         * 6:00
+         * 9:00
+         * 12:00
+         * 15:00
+         * 18:00
+         * 21:00
+         */
+
+        if (
+            date === targetDate &&
+            time.getHours() >= 6 &&
+            time.getHours() <= 21 &&
+            time.getHours() % 3 === 0
+        ) {
+
+            slots.push(i);
+
+        }
+
+    }
+
+
+    /* 最大6個表示 */
+
+    slots.slice(0, 6).forEach(i => {
+
+        const time =
+            new Date(
+                data.hourly.time[i]
+            );
+
+
+        const code =
+            data.hourly.weather_code[i];
+
+
+        const temp =
+            Math.round(
+                data.hourly.temperature_2m[i]
+            );
+
+
+        const rain =
+            data.hourly
+                .precipitation_probability[i]
+                == null
+                ? "--"
+                : Math.round(
+                    data.hourly
+                        .precipitation_probability[i]
+                );
+
+
+        const [
+            condition,
+            iconName
+        ] = weatherInfo(code);
+
+
+        const el =
+            document.createElement("div");
+
+
+        el.className = "hour";
+
+
+        el.innerHTML = `
+
+            <div class="hour-time">
+                ${time.getHours()}:00
+            </div>
+
+            <div
+                class="hour-icon"
+                title="${condition}"
+            >
+                ${icons[iconName]}
+            </div>
+
+            <div class="hour-temp">
+                ${temp}°
+            </div>
+
+            <div class="hour-rain">
+                ${rain}%
+            </div>
+
+        `;
+
+
+        container.appendChild(el);
+
+    });
+
+}
+
+
+/* =========================
+   起動
+========================= */
+
+loadWeather();
+
+
+/* =========================
+   30分ごとに自動更新
+========================= */
+
+setInterval(
+    loadWeather,
+    30 * 60 * 1000
+);
+
+</script>
+
+</body>
+</html>
